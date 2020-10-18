@@ -4,6 +4,7 @@ import OutlinedInput from "@material-ui/core/OutlinedInput";
 import InputLabel from "@material-ui/core/InputLabel";
 import FormControl from "@material-ui/core/FormControl";
 import Button from "@material-ui/core/Button";
+import axios from "axios";
 
 const Home = () => {
   const [name, setName] = useState("");
@@ -17,6 +18,19 @@ const Home = () => {
 
   const handleAddAccount = () => {
     setSummonerNames((summonerNames) => [...summonerNames, ""]);
+  };
+
+  const handleSignupPress = async () => {
+    try {
+      const response = await axios.post("/api/signup", {
+        name,
+        summonerNames,
+      });
+
+      console.log(response);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -80,6 +94,7 @@ const Home = () => {
           color="primary"
           size="large"
           style={{ marginTop: 15 }}
+          onClick={handleSignupPress}
         >
           Take a break
         </Button>
