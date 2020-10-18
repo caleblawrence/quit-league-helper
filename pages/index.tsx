@@ -17,13 +17,12 @@ const Home = () => {
 
   const handleAddAccount = () => {
     setSummonerNames((summonerNames) => [...summonerNames, ""]);
-    console.log(summonerNames.length);
   };
 
   return (
     <div className="container">
       <Head>
-        <title>Salary Converter</title>
+        <title>Quit League</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
@@ -114,7 +113,7 @@ const Home = () => {
 
         h2 {
           font-size: 20px;
-          font-weight: 400;
+          font-weight: ;
         }
       `}</style>
 
