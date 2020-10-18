@@ -5,10 +5,13 @@ import InputLabel from "@material-ui/core/InputLabel";
 import FormControl from "@material-ui/core/FormControl";
 import Button from "@material-ui/core/Button";
 import axios from "axios";
+import { Alert, AlertTitle } from "@material-ui/lab";
 
 const Home = () => {
   const [name, setName] = useState("");
   const [summonerNames, setSummonerNames] = useState([""]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [invalidSummonerNames, setInvalidSummonerNames] = useState([]);
 
   const handleSummonerNameChange = (i: number, summonerName: string) => {
     let newSummerNames = [...summonerNames];
@@ -21,6 +24,8 @@ const Home = () => {
   };
 
   const handleSignupPress = async () => {
+    setIsLoading(true);
+
     try {
       const response = await axios.post("/api/signup", {
         name,
@@ -29,8 +34,14 @@ const Home = () => {
 
       console.log(response);
     } catch (error) {
-      console.error(error);
+      console.error(error.response);
+      if (error.response.data.invalidSummonerNames) {
+        setInvalidSummonerNames(error.response.data.invalidSummonerNames);
+      }
     }
+
+    setIsLoading(false);
+    // TODO: redirect to another page (like the leaderboard)
   };
 
   return (
@@ -76,7 +87,6 @@ const Home = () => {
             />
           </FormControl>
         ))}
-
         <Button
           color="primary"
           onClick={handleAddAccount}
@@ -89,6 +99,15 @@ const Home = () => {
           Be sure to include all your accounts.
         </p>
 
+        {invalidSummonerNames.length > 0 && (
+          <Alert severity="error">
+            <AlertTitle>Invalid Summoner Names</AlertTitle>
+            {invalidSummonerNames.map((name) => (
+              <p>{name}</p>
+            ))}
+          </Alert>
+        )}
+
         <Button
           variant="contained"
           color="primary"
@@ -96,7 +115,7 @@ const Home = () => {
           style={{ marginTop: 15 }}
           onClick={handleSignupPress}
         >
-          Take a break
+          {isLoading ? "Loading..." : "Take a break"}
         </Button>
       </main>
 

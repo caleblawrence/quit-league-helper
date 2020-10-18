@@ -8,7 +8,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     .collection("users")
     .find({})
     .sort({ metacritic: -1 })
-    .limit(20)
+    .limit(100)
     .toArray();
 
   res.json(users);
