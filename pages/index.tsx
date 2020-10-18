@@ -28,7 +28,8 @@ const Home = () => {
       </Head>
 
       <main>
-        <h1>Want to take a break from League of Legends?</h1>
+        <h1>Want to take a break from</h1>
+        <h1 className="LoL">League of Legends?</h1>
         <h2>
           We can help you. Fill out the form below and we will keep track of
           your streak automatically.
@@ -87,12 +88,33 @@ const Home = () => {
 
       <style jsx>{`
         .container {
-          min-height: 100vh;
-          padding: 0 0.5rem;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
+          margin-right: auto; /* 1 */
+          margin-left: auto; /* 1 */
+
+          max-width: 960px; /* 2 */
+
+          padding-right: 10px; /* 3 */
+          padding-left: 10px; /* 3 */
+        }
+
+        h1 {
+          font-size: 50px;
+          margin-bottom: 0;
+          padding-bottom: 0;
+          font-weight: 400;
+        }
+
+        .LoL {
+          font-size: 70px;
+          margin-top: 0;
+          padding-top: 0;
+          margin-bottom: 40px;
+          font-weight: 600;
+        }
+
+        h2 {
+          font-size: 20px;
+          font-weight: 400;
         }
       `}</style>
 
