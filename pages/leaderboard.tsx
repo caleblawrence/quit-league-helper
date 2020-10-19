@@ -62,8 +62,6 @@ export async function getServerSideProps(context) {
     .limit(100)
     .toArray();
 
-  //   await db.collection("users").remove({});
-
   return {
     props: { topUsers: JSON.parse(JSON.stringify(topUsers)) },
   };

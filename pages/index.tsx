@@ -33,6 +33,7 @@ const Home = () => {
         summonerNames,
       });
       setInvalidSummonerNames([]);
+      window.location.href = "/leaderboard";
     } catch (error) {
       console.error(error.response);
       if (error.response.data.invalidSummonerNames) {
@@ -41,7 +42,6 @@ const Home = () => {
     }
 
     setIsLoading(false);
-    window.location.href = "/leaderboard";
   };
 
   return (
