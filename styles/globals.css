@@ -20,3 +20,20 @@ a:visited {
 * {
   box-sizing: border-box;
 }
+
+/* Scrollbar Styles */
+body::-webkit-scrollbar {
+  width: 12px;
+}
+html {
+  scrollbar-width: thin;
+  scrollbar-color: #ec407a #121212;
+}
+body::-webkit-scrollbar-track {
+  background: var(#121212);
+}
+body::-webkit-scrollbar-thumb {
+  background-color: #ec407a;
+  border-radius: 6px;
+  border: 3px solid #121212;
+}

@@ -23,6 +23,7 @@ export default function LeaderBoardRow(props: Props) {
         .section {
           padding: 10px;
           margin-bottom: 20px;
+          background-color: #2b2b2b;
         }
 
         .name {

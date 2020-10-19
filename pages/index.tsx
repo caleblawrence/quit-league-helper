@@ -26,11 +26,11 @@ const Home = () => {
 
   const handleSignupPress = async () => {
     setIsLoading(true);
-
+    const summonerNamesToUse = summonerNames.filter((x) => x.trim() != "");
     try {
       const response = await axios.post("/api/signup", {
         name,
-        summonerNames,
+        summonerNames: summonerNamesToUse,
       });
       setInvalidSummonerNames([]);
       window.location.href = "/leaderboard";

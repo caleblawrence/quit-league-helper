@@ -27,6 +27,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   newUser = req.body;
   newUser.currentSreak = 0;
   newUser.highestStreak = 0;
+  newUser.summonerNames = newUser.summonerNames.filter((x) => x.trim() != "");
 
   const invalidSummonerNames = [];
 
