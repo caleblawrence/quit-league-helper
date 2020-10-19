@@ -27,7 +27,7 @@ export default function Leaderboard(props: Props) {
           style={{
             color: "#797272",
             marginTop: 0,
-            marginLeft: 5,
+            marginLeft: 7,
             paddingTop: 0,
             marginBottom: 25,
           }}
@@ -58,7 +58,7 @@ export default function Leaderboard(props: Props) {
 
         @media only screen and (max-width: 600px) {
           .sectionTitle {
-            font-size: 30px;
+            font-size: 35px;
           }
         }
 

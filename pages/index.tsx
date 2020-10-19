@@ -58,6 +58,10 @@ const Home = () => {
           We can help you. Fill out the form below and we will keep track of
           your streak automatically.
         </h2>
+        <h3>
+          Afterwards you can create custom leaderboards to compete with your
+          friends for the longest streak.
+        </h3>
 
         <FormControl fullWidth variant="outlined">
           <InputLabel htmlFor="outlined-adornment-hourly">Your Name</InputLabel>
@@ -152,10 +156,10 @@ const Home = () => {
 
         @media only screen and (max-width: 600px) {
           h1 {
-            font-size: 40px;
+            font-size: 30px;
           }
           .LoL {
-            font-size: 50px;
+            font-size: 40px;
           }
         }
 
