@@ -30,14 +30,10 @@ export default function ButtonAppBar() {
       <AppBar position="static">
         <Toolbar>
           <Button color="inherit">
-            <Link href="/" style={{ textDecoration: "none" }}>
-              Sign up
-            </Link>
+            <Link href="/">Sign up</Link>
           </Button>
           <Button color="inherit">
-            <Link href="/leaderboard" style={{ textDecoration: "none" }}>
-              Leaderboard
-            </Link>
+            <Link href="/leaderboard">Leaderboard</Link>
           </Button>
         </Toolbar>
       </AppBar>
