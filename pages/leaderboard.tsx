@@ -2,6 +2,8 @@ import Head from "next/head";
 import { User } from "../types/User";
 import { connectToDatabase } from "../util/mongodb";
 import LeaderBoardRow from "../components/leaderboard/leaderBoardRow";
+import React from "react";
+import { Button } from "@material-ui/core";
 
 interface Props {
   topUsers: User[];
@@ -17,6 +19,22 @@ export default function Leaderboard(props: Props) {
 
       <main>
         <h1 className="sectionTitle">Leaderboard</h1>
+
+        <Button color="primary" style={{ marginBottom: 0 }}>
+          Build a custom board
+        </Button>
+        <p
+          style={{
+            color: "#797272",
+            marginTop: 0,
+            marginLeft: 5,
+            paddingTop: 0,
+            marginBottom: 25,
+          }}
+        >
+          Custom boards are a great way to compete with your friends.
+        </p>
+
         {topUsers.map((user) => (
           <LeaderBoardRow user={user} />
         ))}
@@ -35,6 +53,7 @@ export default function Leaderboard(props: Props) {
 
         .sectionTitle {
           font-size: 50px;
+          margin-bottom: 5px;
         }
 
         @media only screen and (max-width: 600px) {
