@@ -1,9 +1,13 @@
 import Head from "next/head";
-import React, { useState } from "react";
+import { User } from "../types/User";
+import { connectToDatabase } from "../util/mongodb";
+import LeaderBoardRow from "../components/leaderboard/leaderBoardRow";
 
-const Leaderboard = () => {
-  const [isLoading, setIsLoading] = useState(false);
-
+interface Props {
+  topUsers: User[];
+}
+export default function Leaderboard(props: Props) {
+  const { topUsers } = props;
   return (
     <div className="container">
       <Head>
@@ -12,7 +16,10 @@ const Leaderboard = () => {
       </Head>
 
       <main>
-        <h1>Leaderboard</h1>
+        <h1 className="sectionTitle">Leaderboard</h1>
+        {topUsers.map((user) => (
+          <LeaderBoardRow user={user} />
+        ))}
       </main>
 
       <style jsx>{`
@@ -26,44 +33,38 @@ const Leaderboard = () => {
           padding-left: 10px; /* 3 */
         }
 
-        h1 {
+        .sectionTitle {
           font-size: 50px;
-          margin-bottom: 0;
-          padding-bottom: 0;
-          font-weight: 400;
         }
 
-        .LoL {
-          font-size: 70px;
-          margin-top: 0;
-          padding-top: 0;
-          margin-bottom: 40px;
-          font-weight: 600;
+        @media only screen and (max-width: 600px) {
+          .sectionTitle {
+            font-size: 30px;
+          }
         }
 
-        h2 {
-          font-size: 20px;
-          font-weight: ;
-        }
-      `}</style>
-
-      <style jsx global>{`
-        html,
-        body {
-          padding: 0;
-          margin: 0;
-          background-color: #121212 !important;
-          font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto,
-            Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue,
-            sans-serif;
-        }
-
-        * {
-          box-sizing: border-box;
+        a {
+          color: white !important;
+          text-decoration: none !important; /* no underline */
         }
       `}</style>
     </div>
   );
-};
+}
 
-export default Leaderboard;
+export async function getServerSideProps(context) {
+  const { db } = await connectToDatabase();
+
+  const topUsers = await db
+    .collection("users")
+    .find({})
+    .sort({ currentSreak: -1 })
+    .limit(100)
+    .toArray();
+
+  //   await db.collection("users").remove({});
+
+  return {
+    props: { topUsers: JSON.parse(JSON.stringify(topUsers)) },
+  };
+}

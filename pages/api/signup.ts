@@ -1,13 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { connectToDatabase } from "../../util/mongodb";
 import axios from "axios";
-
-interface User {
-  name: string;
-  summonerNames: string[];
-  currentSreak: number;
-  highestStreak: number;
-}
+import { User } from "../../types/User";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const instance = axios.create({
@@ -18,7 +12,18 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   const { db } = await connectToDatabase();
   let newUser: User;
 
-  // TODO: make sure the type is setup correclty (enforce schema)
+  if (
+    !req.body.hasOwnProperty("name") ||
+    req.body.name == null ||
+    req.body.name == "" ||
+    !req.body.hasOwnProperty("summonerNames") ||
+    req.body.summonerNames == null
+  ) {
+    return res
+      .status(400)
+      .json({ error: "name and summonerNames required in the body." });
+  }
+
   newUser = req.body;
   newUser.currentSreak = 0;
   newUser.highestStreak = 0;
@@ -34,7 +39,12 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           summonerName
       );
     } catch (error) {
-      invalidSummonerNames.push(summonerName);
+      // if the league api could not be reached we should skip validations.
+      if (error.response.status === 404) {
+        invalidSummonerNames.push(summonerName);
+      } else {
+        // TODO: log this - means api could not be reached for some reason and no summoner name validation is happneing
+      }
     }
   }
 

@@ -6,6 +6,7 @@ import FormControl from "@material-ui/core/FormControl";
 import Button from "@material-ui/core/Button";
 import axios from "axios";
 import { Alert, AlertTitle } from "@material-ui/lab";
+import ButtonAppBar from "../components/appBar";
 
 const Home = () => {
   const [name, setName] = useState("");
@@ -148,6 +149,20 @@ const Home = () => {
         h2 {
           font-size: 20px;
           font-weight: ;
+        }
+
+        @media only screen and (max-width: 600px) {
+          h1 {
+            font-size: 40px;
+          }
+          .LoL {
+            font-size: 50px;
+          }
+        }
+
+        a {
+          color: white;
+          text-decoration: none !important; /* no underline */
         }
       `}</style>
 
