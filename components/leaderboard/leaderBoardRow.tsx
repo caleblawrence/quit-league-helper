@@ -13,7 +13,12 @@ export default function LeaderBoardRow(props: Props) {
     <Paper elevation={3}>
       <div className="section">
         <p className="name">{user.name}</p>
-        <p className="streak">Streak: {user.currentSreak} days</p>
+        <p className="streak">
+          {user.currentSreak} days{" "}
+          <span style={{ color: "#b9b3b3", fontSize: 20 }}>
+            since last game of League of Legends
+          </span>
+        </p>
         <p className="summonerNames">
           {user.summonerNames.map((name) => name + ", ")}
         </p>
