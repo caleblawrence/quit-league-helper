@@ -3,6 +3,9 @@ import { Streak } from "../../types/Streak";
 import { connectToDatabase } from "../../util/mongodb";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
+  // TODO: excape early when deployed
+  return res.json({ status: "success" });
+
   const { db } = await connectToDatabase();
   await db.collection("users").remove({});
   await db.collection("streaks").remove({});

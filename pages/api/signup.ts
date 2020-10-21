@@ -25,9 +25,16 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       .json({ error: "name and summonerNames required in the body." });
   }
 
+  req.body.summonerNames = req.body.summonerNames.filter((x) => x.trim() != "");
+  if (req.body.summonerNames.length == 0) {
+    return res.status(400).json({
+      error: "A valid list of summonerNames is required.",
+    });
+  }
+
   newUser = req.body;
   newUser.currentSreak = 0;
-  newUser.summonerNames = newUser.summonerNames.filter((x) => x.trim() != "");
+  newUser.summonerNames = req.body.summonerNames;
 
   const invalidSummonerNames = [];
 

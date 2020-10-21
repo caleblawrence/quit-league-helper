@@ -77,7 +77,7 @@ const checkIfUsersArePlaying = async () => {
 
       // To calculate the no. of days between two dates
       var differenceInDays = differenceInTime / (1000 * 3600 * 24);
-      differenceInDays = Math.ceil(differenceInDays);
+      differenceInDays = Math.floor(differenceInDays);
 
       await db.collection("users").updateOne(
         { _id: user._id },

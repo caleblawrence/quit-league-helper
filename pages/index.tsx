@@ -118,6 +118,10 @@ const Home = () => {
           size="large"
           style={{ marginTop: 15 }}
           onClick={handleSignupPress}
+          disabled={
+            summonerNames.filter((x) => x.trim() != "").length === 0 ||
+            name === ""
+          }
         >
           {isLoading ? "Loading..." : "Take a break"}
         </Button>
