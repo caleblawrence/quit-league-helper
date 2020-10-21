@@ -8,7 +8,8 @@ import { Button } from "@material-ui/core";
 interface Props {
   topUsers: User[];
 }
-export default function Leaderboard(props: Props) {
+
+function Leaderboard(props: Props) {
   const { topUsers } = props;
   return (
     <div className="container">
@@ -36,7 +37,7 @@ export default function Leaderboard(props: Props) {
         </p>
 
         {topUsers.map((user) => (
-          <LeaderBoardRow user={user} />
+          <LeaderBoardRow user={user} key={user.name} />
         ))}
       </main>
 
@@ -71,7 +72,7 @@ export default function Leaderboard(props: Props) {
   );
 }
 
-export async function getServerSideProps(context) {
+export async function getStaticProps() {
   const { db } = await connectToDatabase();
 
   const topUsers = await db
@@ -83,5 +84,8 @@ export async function getServerSideProps(context) {
 
   return {
     props: { topUsers: JSON.parse(JSON.stringify(topUsers)) },
+    revalidate: 1,
   };
 }
+
+export default Leaderboard;
