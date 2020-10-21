@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { connectToDatabase } from "../../util/mongodb";
 import axios from "axios";
 import { User } from "../../types/User";
+import { Streak } from "../../types/Streak";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const instance = axios.create({
@@ -26,7 +27,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   newUser = req.body;
   newUser.currentSreak = 0;
-  newUser.highestStreak = 0;
   newUser.summonerNames = newUser.summonerNames.filter((x) => x.trim() != "");
 
   const invalidSummonerNames = [];
@@ -44,6 +44,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       if (error.response.status === 404) {
         invalidSummonerNames.push(summonerName);
       } else {
+        console.log("could not validate summoner name because of API error");
         // TODO: log this - means api could not be reached for some reason and no summoner name validation is happneing
       }
     }
@@ -55,6 +56,15 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       .json({ error: "Invalid summoner names.", invalidSummonerNames });
   }
 
-  db.collection("users").insertOne(newUser);
+  var result = await db.collection("users").insertOne(newUser);
+  let newUserId = result["ops"][0]["_id"];
+
+  let newStreak = <Streak>{};
+  newStreak.startDate = new Date();
+  newStreak.endDate = null;
+  newStreak.userId = newUserId;
+
+  await db.collection("streaks").insertOne(newStreak);
+
   return res.json({ status: "success" });
 };
