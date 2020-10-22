@@ -1,8 +1,9 @@
-import { exception } from "console";
 import { Streak } from "../types/Streak";
 
 var axios = require("axios");
 var mongoUtils = require("../util/mongodb");
+
+const { LEAGUE_API_KEY } = process.env;
 
 const checkIfUsersArePlaying = async () => {
   const { db } = await mongoUtils.connectToDatabase();
@@ -99,21 +100,24 @@ const getDateOfLastGameForSummoner = async (
   const instance = axios.create({
     timeout: 1000,
     headers: {
-      "X-Riot-Token": "RGAPI-77ce791b-02ac-4959-92ac-ce15a92c16e5",
+      "X-Riot-Token": LEAGUE_API_KEY,
     },
   });
 
   let accountId = "";
   try {
-    const summonerAccountInformation = await instance.get(
+    var URI = encodeURI(
       "https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-name/" +
         summonerName
     );
 
+    const summonerAccountInformation = await instance.get(URI);
     accountId = summonerAccountInformation.data.accountId;
-    console.log("accountId", accountId);
   } catch (error) {
-    console.log("error", error);
+    console.log(
+      "[ERROR] could not get summoner accountId through riot api. Status code:",
+      error.response.status
+    );
   }
 
   try {
@@ -126,7 +130,10 @@ const getDateOfLastGameForSummoner = async (
     let lastGameDate = new Date(response.data.matches[0].timestamp);
     return lastGameDate;
   } catch (error) {
-    console.log("error", error);
+    console.log(
+      "[ERROR] could not get summoner match history through riot api. Status code:",
+      error.response.status
+    );
   }
 };
 

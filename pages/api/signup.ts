@@ -4,10 +4,12 @@ import axios from "axios";
 import { User } from "../../types/User";
 import { Streak } from "../../types/Streak";
 
+const { LEAGUE_API_KEY } = process.env;
+
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const instance = axios.create({
     timeout: 1000,
-    headers: { "X-Riot-Token": "RGAPI-1c2f50ad-dcf5-44e8-87e4-9a092b4dbc8f" },
+    headers: { "X-Riot-Token": LEAGUE_API_KEY },
   });
 
   const { db } = await connectToDatabase();
