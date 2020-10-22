@@ -1,3 +1,4 @@
+import { exception } from "console";
 import { Streak } from "../types/Streak";
 
 var axios = require("axios");
@@ -5,7 +6,17 @@ var mongoUtils = require("../util/mongodb");
 
 const { LEAGUE_API_KEY } = process.env;
 
+const axiosInstance = axios.create({
+  timeout: 1000,
+  headers: {
+    "X-Riot-Token": LEAGUE_API_KEY,
+  },
+});
+
 const checkIfUsersArePlaying = async () => {
+  // leave early if we can't connect
+  await checkIfRiotApiCanConnect();
+
   const { db } = await mongoUtils.connectToDatabase();
   const users = await db
     .collection("users")
@@ -97,13 +108,6 @@ const checkIfUsersArePlaying = async () => {
 const getDateOfLastGameForSummoner = async (
   summonerName: string
 ): Promise<Date> => {
-  const instance = axios.create({
-    timeout: 1000,
-    headers: {
-      "X-Riot-Token": LEAGUE_API_KEY,
-    },
-  });
-
   let accountId = "";
   try {
     var URI = encodeURI(
@@ -111,7 +115,7 @@ const getDateOfLastGameForSummoner = async (
         summonerName
     );
 
-    const summonerAccountInformation = await instance.get(URI);
+    const summonerAccountInformation = await axiosInstance.get(URI);
     accountId = summonerAccountInformation.data.accountId;
   } catch (error) {
     console.log(
@@ -121,7 +125,7 @@ const getDateOfLastGameForSummoner = async (
   }
 
   try {
-    const response = await instance.get(
+    const response = await axiosInstance.get(
       "https://na1.api.riotgames.com/lol/match/v4/matchlists/by-account/" +
         accountId +
         "?champion=&queue=&season=&endTime=&beginTime=&endIndex=&beginIndex="
@@ -134,6 +138,23 @@ const getDateOfLastGameForSummoner = async (
       "[ERROR] could not get summoner match history through riot api. Status code:",
       error.response.status
     );
+  }
+};
+
+const checkIfRiotApiCanConnect = async () => {
+  try {
+    var URI = encodeURI(
+      "https://na1.api.riotgames.com//lol/platform/v3/champion-rotations"
+    );
+
+    await axiosInstance.get(URI);
+    console.log("Was able to connect to RIOT api. Continuing...");
+  } catch (error) {
+    console.log(
+      "[ERROR] riot API could not be reached with token:",
+      error.response.status
+    );
+    throw new Error("Can't connect to riot api");
   }
 };
 
