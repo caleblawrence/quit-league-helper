@@ -4,6 +4,7 @@ import { connectToDatabase } from "../util/mongodb";
 import LeaderBoardRow from "../components/leaderboard/leaderBoardRow";
 import React from "react";
 import { Button } from "@material-ui/core";
+import Alert from "@material-ui/lab/Alert";
 
 interface Props {
   topUsers: User[];
@@ -20,6 +21,14 @@ function Leaderboard(props: Props) {
 
       <main>
         <h1 className="sectionTitle">Leaderboard</h1>
+
+        <Alert
+          severity="warning"
+          style={{ marginBottom: 20, backgroundColor: "rgb(43 29 7)" }}
+        >
+          I'm still waiting on a real Riot API Token so this is only updated
+          about once every couple days.
+        </Alert>
 
         <Button color="primary" style={{ marginBottom: 0 }}>
           Build a custom board
