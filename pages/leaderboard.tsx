@@ -5,6 +5,7 @@ import LeaderBoardRow from "../components/leaderboard/leaderBoardRow";
 import React from "react";
 import { Button } from "@material-ui/core";
 import Alert from "@material-ui/lab/Alert";
+import Link from "next/link";
 
 interface Props {
   topUsers: User[];
@@ -30,9 +31,12 @@ function Leaderboard(props: Props) {
           about once every couple days.
         </Alert>
 
-        <Button color="primary" style={{ marginBottom: 0 }}>
-          Build a custom board
-        </Button>
+        <Link href="/build-custom-leaderboard">
+          <Button color="primary" style={{ marginBottom: 0 }}>
+            Build a custom leaderboard
+          </Button>
+        </Link>
+
         <p
           style={{
             color: "#797272",
@@ -42,7 +46,7 @@ function Leaderboard(props: Props) {
             marginBottom: 25,
           }}
         >
-          Custom boards are a great way to compete with your friends.
+          Custom leaderboards are a great way to compete with your friends.
         </p>
 
         {topUsers.map((user) => (

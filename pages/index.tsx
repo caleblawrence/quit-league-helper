@@ -94,7 +94,7 @@ const Home = () => {
         <Button
           color="primary"
           onClick={handleAddAccount}
-          style={{ marginBottom: 0, paddingBottom: 0 }}
+          style={{ marginBottom: 0 }}
         >
           Add another account
         </Button>
