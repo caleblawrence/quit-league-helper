@@ -98,6 +98,7 @@ export async function getStaticProps() {
   return {
     props: { topUsers: JSON.parse(JSON.stringify(topUsers)) },
     revalidate: 1,
+    fallback: "blocking",
   };
 }
 
