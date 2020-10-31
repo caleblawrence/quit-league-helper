@@ -1,6 +1,6 @@
-import { CustomLeaderboard } from "./../../types/CustomLeaderboard";
+import { CustomLeaderboard } from "../../../types/CustomLeaderboard";
 import { NextApiRequest, NextApiResponse } from "next";
-import { connectToDatabase } from "../../util/mongodb";
+import { connectToDatabase } from "../../../util/mongodb";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   const { db } = await connectToDatabase();
@@ -56,7 +56,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   customLeaderboard.createdAt = new Date();
   customLeaderboard.userIds = userIds;
 
-  await db.collection("customLeaderboards").insertOne(customLeaderboard);
+  let newBoard = await db
+    .collection("customLeaderboards")
+    .insertOne(customLeaderboard);
 
-  return res.json({ status: "success" });
+  return res.json({ newBoard });
 };

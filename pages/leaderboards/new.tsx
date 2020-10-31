@@ -2,30 +2,30 @@ import Head from "next/head";
 import React, { useState } from "react";
 import TextField from "@material-ui/core/TextField";
 import { Button } from "@material-ui/core";
-import { Alert } from "@material-ui/lab";
+import { Alert, AlertTitle } from "@material-ui/lab";
 import axios from "axios";
 
 function BuildCustomLeaderboard() {
   const [name, setName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [summonerNames, setSummonerNames] = useState([""]);
-  const [invalidUsers, setInvalidUsers] = useState([]);
+  const [summonerNamesNotFound, setSummonerNamesNotFound] = useState([]);
 
   const handleCreateButtonPress = async () => {
     setIsLoading(true);
     const summonerNamesToUse = summonerNames.filter((x) => x.trim() != "");
     try {
-      const response = await axios.post("/api/custom-leader-board", {
+      const response = await axios.post("/api/leaderboards", {
         name,
         summonerNames: summonerNamesToUse,
       });
-      setInvalidUsers([]);
+      setSummonerNamesNotFound([]);
       // TODO: redirect to the new leaderboard
-      //   window.location.href = "/leaderboard";
+      // window.location.href = "/leaderboard";
     } catch (error) {
       console.error(error.response);
-      if (error.response.data.invalidUsers) {
-        setInvalidUsers(error.response.data.invalidUsers);
+      if (error.response.data.summonerNamesNotFound) {
+        setSummonerNamesNotFound(error.response.data.summonerNamesNotFound);
       }
     }
 
@@ -70,7 +70,7 @@ function BuildCustomLeaderboard() {
         />
         <p style={{ marginBottom: 0 }}>
           You can add people to this board by entering in one of their summoner
-          names they signed up with.
+          names they signed up with (eg. their main account).
         </p>
         {summonerNames.map((summonerName, i) => (
           <TextField
@@ -90,6 +90,18 @@ function BuildCustomLeaderboard() {
         >
           Add another user
         </Button>
+
+        {summonerNamesNotFound.length > 0 && (
+          <Alert severity="error" style={{ backgroundColor: "rgb(37 11 10)" }}>
+            <AlertTitle>
+              Could not find users that signed up the following summoner names:
+            </AlertTitle>
+            {summonerNamesNotFound.map((name) => (
+              <p>{name}</p>
+            ))}
+          </Alert>
+        )}
+
         <Button
           variant="contained"
           color="primary"
