@@ -53,12 +53,6 @@ function BuildCustomLeaderboard() {
         <h1 className="sectionTitle" style={{ marginBottom: 20 }}>
           Build a custom leaderboard
         </h1>
-        <Alert
-          severity="warning"
-          style={{ marginBottom: 20, backgroundColor: "rgb(43 29 7)" }}
-        >
-          This page is still a work in progress.
-        </Alert>
         <TextField
           id="outlined-basic"
           label="Leaderboard name"
