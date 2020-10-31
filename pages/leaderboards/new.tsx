@@ -20,8 +20,8 @@ function BuildCustomLeaderboard() {
         summonerNames: summonerNamesToUse,
       });
       setSummonerNamesNotFound([]);
-      // TODO: redirect to the new leaderboard
-      // window.location.href = "/leaderboard";
+
+      window.location.href = "/leaderboards/" + encodeURI(name);
     } catch (error) {
       console.error(error.response);
       if (error.response.data.summonerNamesNotFound) {
