@@ -6,6 +6,7 @@ import { connectToDatabase } from "../../util/mongodb";
 import LeaderBoardRow from "../../components/leaderboard/leaderBoardRow";
 import React from "react";
 import Error from "next/error";
+import { Alert } from "@material-ui/lab";
 
 interface Props {
   topUsers: User[];
@@ -28,6 +29,14 @@ function Leaderboard(props: Props) {
 
       <main>
         <h1 className="sectionTitle">{name}</h1>
+
+        <Alert
+          severity="warning"
+          style={{ marginBottom: 20, backgroundColor: "rgb(43 29 7)" }}
+        >
+          I'm still waiting on a real Riot API Token so this is only updated
+          about once every couple days.
+        </Alert>
 
         {topUsers.map((user) => (
           <LeaderBoardRow user={user} key={user.name} />

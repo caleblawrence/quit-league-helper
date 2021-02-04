@@ -9,7 +9,7 @@ const { LEAGUE_API_KEY } = process.env;
 const axiosInstance = axios.create({
   timeout: 1000,
   headers: {
-    "X-Riot-Token": LEAGUE_API_KEY,
+    "X-Riot-Token": "RGAPI-f95b3690-2a4e-46c3-bb7e-889e221af98a",
   },
 });
 
