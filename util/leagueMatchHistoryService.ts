@@ -119,8 +119,7 @@ const getDateOfLastGameForSummoner = async (
     accountId = summonerAccountInformation.data.accountId;
   } catch (error) {
     console.log(
-      "[ERROR] could not get summoner accountId through riot api. Status code:",
-      error.response.status
+      `[WARNING] Could not get summoner accountId through riot api for summonername: ${summonerName}. Status code: ${error.response.status}`
     );
   }
 
@@ -135,8 +134,7 @@ const getDateOfLastGameForSummoner = async (
     return lastGameDate;
   } catch (error) {
     console.log(
-      "[ERROR] could not get summoner match history through riot api. Status code:",
-      error.response.status
+      `[WARNING] could not get summoner match history through riot api for summonerName: ${summonerName}. Status code: ${error.response.status}`
     );
   }
 };
@@ -151,8 +149,7 @@ const checkIfRiotApiCanConnect = async () => {
     console.log("Was able to connect to RIOT api. Continuing...");
   } catch (error) {
     console.log(
-      "[ERROR] riot API could not be reached with token:",
-      error.response.status
+      `[ERROR] riot API could not be reached with token. Status code: ${error.response.status}`
     );
     throw new Error("Can't connect to riot api");
   }
