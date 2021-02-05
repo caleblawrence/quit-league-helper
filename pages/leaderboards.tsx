@@ -1,13 +1,9 @@
 import Head from "next/head";
-import LeaderBoardRow from "../components/leaderboard/leaderBoardRow";
 import React from "react";
-import { Button } from "@material-ui/core";
-import Alert from "@material-ui/lab/Alert";
-import Link from "next/link";
 import prisma from "../lib/prisma";
-import { CustomLeaderboard, User } from "@prisma/client";
+import { CustomLeaderboard } from "@prisma/client";
 import BuildLeaderboardButton from "../components/buildLeaderboardButton";
-
+import LeaderboardSummary from "../components/leaderboardSummary";
 interface Props {
   leaderboards: CustomLeaderboard[];
 }
@@ -26,9 +22,9 @@ function Leaderboard(props: Props) {
 
         <BuildLeaderboardButton />
 
-        {leaderboards.map((leaderboard) => {
-          return <p>{leaderboard.name}</p>;
-        })}
+        {leaderboards.map((leaderboard) => (
+          <LeaderboardSummary leaderboard={leaderboard} />
+        ))}
       </main>
 
       <style jsx>{`
