@@ -1,19 +1,17 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { connectToDatabase } from "../../util/mongodb";
 import axios from "axios";
-import { User } from "../../types/User";
-import { Streak } from "../../types/Streak";
+import { PrismaClient } from "@prisma/client";
 
 const { LEAGUE_API_KEY } = process.env;
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
+  const prisma = new PrismaClient();
+
+  // TODO: abstract the validation into it's own method
   const instance = axios.create({
     timeout: 1000,
     headers: { "X-Riot-Token": LEAGUE_API_KEY },
   });
-
-  const { db } = await connectToDatabase();
-  let newUser: User;
 
   if (
     !req.body.hasOwnProperty("name") ||
@@ -34,15 +32,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     });
   }
 
-  newUser = req.body;
-  newUser.currentSreak = 0;
-  newUser.summonerNames = req.body.summonerNames;
-
   const invalidSummonerNames = [];
 
-  for (let x in newUser.summonerNames) {
-    let summonerName = newUser.summonerNames[x];
-
+  for (let summonerName in req.body.summonerNames) {
     try {
       const response = await instance.get(
         "https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-name/" +
@@ -65,15 +57,19 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       .json({ error: "Invalid summoner names.", invalidSummonerNames });
   }
 
-  var result = await db.collection("users").insertOne(newUser);
-  let newUserId = result["ops"][0]["_id"];
-
-  let newStreak = <Streak>{};
-  newStreak.startDate = new Date();
-  newStreak.endDate = null;
-  newStreak.userId = newUserId;
-
-  await db.collection("streaks").insertOne(newStreak);
+  await prisma.user.create({
+    data: {
+      name: req.body.name,
+      currentStreak: 0,
+      summonerNames: req.body.summonerNames,
+      Streak: {
+        create: {
+          startDate: new Date(),
+          endDate: null,
+        },
+      },
+    },
+  });
 
   return res.json({ status: "success" });
 };

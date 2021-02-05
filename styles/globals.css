@@ -27,13 +27,13 @@ body::-webkit-scrollbar {
 }
 html {
   scrollbar-width: thin;
-  scrollbar-color: #ec407a #121212;
+  scrollbar-color: #ec407a rgba(0, 0, 0, 1);
 }
 body::-webkit-scrollbar-track {
-  background: var(#121212);
+  background: var(rgba(0, 0, 0, 1));
 }
 body::-webkit-scrollbar-thumb {
   background-color: #ec407a;
   border-radius: 6px;
-  border: 3px solid #121212;
+  border: 3px solid rgba(0, 0, 0, 1);
 }

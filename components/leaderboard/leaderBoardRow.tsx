@@ -1,7 +1,7 @@
 import { Paper } from "@material-ui/core";
+import { User } from "@prisma/client";
 import Head from "next/head";
 import React from "react";
-import { User } from "../../types/User";
 
 interface Props {
   user: User;
@@ -14,13 +14,18 @@ export default function LeaderBoardRow(props: Props) {
       <div className="section">
         <p className="name">{user.name}</p>
         <p className="streak">
-          {user.currentSreak} {user.currentSreak > 0 ? "day" : "days"}{" "}
+          {user.currentStreak} {user.currentStreak > 0 ? "day" : "days"}{" "}
           <span style={{ color: "#b9b3b3", fontSize: 20 }}>
             since last game of League of Legends
           </span>
         </p>
         <p className="summonerNames">
-          {user.summonerNames.map((name) => name + ", ")}
+          {user.summonerNames.map((name, index) => {
+            if (index == user.summonerNames.length - 1) {
+              return name;
+            }
+            return name + ", ";
+          })}
         </p>
       </div>
 

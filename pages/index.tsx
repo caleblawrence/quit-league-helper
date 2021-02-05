@@ -33,7 +33,7 @@ const Home = () => {
         summonerNames: summonerNamesToUse,
       });
       setInvalidSummonerNames([]);
-      window.location.href = "/leaderboard";
+      window.location.href = "/global-leaderboard";
     } catch (error) {
       console.error(error.response);
       if (error.response.data.invalidSummonerNames) {
@@ -178,7 +178,7 @@ const Home = () => {
         body {
           padding: 0;
           margin: 0;
-          background-color: #121212 !important;
+          background-color: rgba(0, 0, 0, 1) !important;
           font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto,
             Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue,
             sans-serif;

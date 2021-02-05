@@ -15,13 +15,13 @@ function BuildCustomLeaderboard() {
     setIsLoading(true);
     const summonerNamesToUse = summonerNames.filter((x) => x.trim() != "");
     try {
-      const response = await axios.post("/api/leaderboards", {
+      const response = await axios.post("/api/leaderboard", {
         name,
         summonerNames: summonerNamesToUse,
       });
       setSummonerNamesNotFound([]);
 
-      window.location.href = "/leaderboards/" + encodeURI(name);
+      window.location.href = "/leaderboard/" + encodeURI(name);
     } catch (error) {
       console.error(error.response);
       if (error.response.data.summonerNamesNotFound) {
