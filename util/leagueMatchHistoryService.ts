@@ -67,7 +67,7 @@ const checkIfUsersArePlaying = async () => {
         data: { endDate: new Date() },
       });
 
-      prisma.streak.create({
+      await prisma.streak.create({
         data: {
           startDate: new Date(),
           endDate: null,
