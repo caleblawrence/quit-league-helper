@@ -8,8 +8,12 @@ import axios from "axios";
 function BuildCustomLeaderboard() {
   const [name, setName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [summonerNames, setSummonerNames] = useState([""]);
+  const [summonerNames, setSummonerNames] = useState(["", ""]);
   const [summonerNamesNotFound, setSummonerNamesNotFound] = useState([]);
+  const [
+    shouldShowLeadboardNameError,
+    setShouldShowLeadboardNameError,
+  ] = useState(false);
 
   const handleCreateButtonPress = async () => {
     setIsLoading(true);
@@ -20,10 +24,14 @@ function BuildCustomLeaderboard() {
         summonerNames: summonerNamesToUse,
       });
       setSummonerNamesNotFound([]);
+      setShouldShowLeadboardNameError(false);
 
       window.location.href = "/leaderboard/" + encodeURI(name);
     } catch (error) {
       console.error(error.response);
+      if (error.response.status === 409) {
+        setShouldShowLeadboardNameError(true);
+      }
       if (error.response.data.summonerNamesNotFound) {
         setSummonerNamesNotFound(error.response.data.summonerNamesNotFound);
       }
@@ -45,7 +53,7 @@ function BuildCustomLeaderboard() {
   return (
     <div className="container">
       <Head>
-        <title>Build a Custom Leaderboard</title>
+        <title>Build a Leaderboard</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
@@ -96,6 +104,12 @@ function BuildCustomLeaderboard() {
           </Alert>
         )}
 
+        {shouldShowLeadboardNameError && (
+          <Alert severity="error" style={{ backgroundColor: "rgb(37 11 10)" }}>
+            <AlertTitle>Leadboard already exists with this name</AlertTitle>
+          </Alert>
+        )}
+
         <Button
           variant="contained"
           color="primary"
@@ -103,7 +117,7 @@ function BuildCustomLeaderboard() {
           style={{ marginTop: 15 }}
           onClick={handleCreateButtonPress}
           disabled={
-            summonerNames.filter((x) => x.trim() != "").length === 0 ||
+            summonerNames.filter((x) => x.trim() !== "").length < 2 ||
             name === ""
           }
         >

@@ -47,6 +47,18 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       .json({ error: "Invalid summoner names.", summonerNamesNotFound });
   }
 
+  var numLeaderboardsAlreadyWithThisName = await prisma.customLeaderboard.count(
+    {
+      where: { name: req.body.name },
+    }
+  );
+
+  if (numLeaderboardsAlreadyWithThisName !== 0) {
+    return res
+      .status(409)
+      .json({ error: "Leaderboard with that name already exists." });
+  }
+
   var newLeaderboard = await prisma.customLeaderboard.create({
     data: {
       name: req.body.name,
