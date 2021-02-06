@@ -11,7 +11,6 @@ const checkIfUsersArePlaying = async () => {
     },
   });
 
-  // leave early if we can't connect
   let canConnect = await canConnectToRiotApi(axiosInstance);
   if (!canConnect) {
     throw new Error("Can't connect to Riot Api. Check your Api token.");
@@ -21,6 +20,7 @@ const checkIfUsersArePlaying = async () => {
 
   for (const user of users) {
     let latestDatePlayed = new Date(-8640000000000000);
+    let lastAccountPlayedOn = "";
     for (const summonerName of user.summonerNames) {
       var lastGameOnAccount = await getDateOfLastGameForSummoner(
         summonerName,
@@ -29,70 +29,25 @@ const checkIfUsersArePlaying = async () => {
 
       if (lastGameOnAccount > latestDatePlayed) {
         latestDatePlayed = lastGameOnAccount;
+        lastAccountPlayedOn = summonerName;
       }
     }
 
-    // dont care about hours/min/sec
-    latestDatePlayed.setHours(0, 0, 0, 0);
-
-    const users = await prisma.user.findMany();
-
-    const lastSteakForUser = await prisma.streak.findFirst({
-      where: { id: user.id },
-      orderBy: {
-        startDate: "asc",
-      },
-    });
-
-    if (lastSteakForUser == undefined || lastSteakForUser == null) {
-      console.log(`[ERROR] no streak existed for user: ${user.name}"`);
-    }
-
-    const lastStreakStartDate = new Date(lastSteakForUser.startDate);
-
-    // dont care about hours/min/sec
-    lastStreakStartDate.setHours(0, 0, 0, 0);
-
     console.log(
-      `[INFO] User: ${user.name} played their last game on ${latestDatePlayed} and their last streak startdate was ${lastStreakStartDate}.`
+      `[INFO] User: ${user.name} played their last game on ${latestDatePlayed} (with ${lastAccountPlayedOn}).`
     );
 
-    if (latestDatePlayed > lastStreakStartDate) {
-      console.log(
-        `[INFO] Streak was ended for user: ${user.name}. Creaing a new one.`
-      );
+    // To calculate the time difference of two dates
+    var differenceInTime = new Date().getTime() - latestDatePlayed.getTime();
 
-      await prisma.streak.update({
-        where: { id: lastSteakForUser.id },
-        data: { endDate: new Date() },
-      });
+    // To calculate the no. of days between two dates
+    let daysSinceLastGame = differenceInTime / (1000 * 3600 * 24);
+    daysSinceLastGame = Math.floor(daysSinceLastGame);
 
-      await prisma.streak.create({
-        data: {
-          startDate: new Date(),
-          endDate: null,
-          userId: user.id,
-        },
-      });
-
-      await prisma.user.update({
-        where: { id: user.id },
-        data: { currentStreak: 0 },
-      });
-    } else {
-      console.log(`[INFO] Streak continues for user: ${user.name}.`);
-      // To calculate the time difference of two dates
-      var differenceInTime = new Date().getTime() - latestDatePlayed.getTime();
-
-      // To calculate the no. of days between two dates
-      let differenceInDays = differenceInTime / (1000 * 3600 * 24);
-      differenceInDays = Math.floor(differenceInDays);
-
-      await prisma.user.update({
-        where: { id: user.id },
-        data: { currentStreak: differenceInDays },
-      });
-    }
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { currentStreak: daysSinceLastGame },
+    });
   }
 };
 
