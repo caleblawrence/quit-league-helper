@@ -13,6 +13,11 @@ const checkIfUsersArePlaying = async () => {
 
   let canConnect = await canConnectToRiotApi(axiosInstance);
   if (!canConnect) {
+    await prisma.matchHistoryServiceAudit.create({
+      data: {
+        couldConnectToRiotApi: false,
+      },
+    });
     throw new Error("Can't connect to Riot Api. Check your Api token.");
   }
 
@@ -56,6 +61,11 @@ const checkIfUsersArePlaying = async () => {
       },
     });
   }
+
+  // all rows defaulted
+  await prisma.matchHistoryServiceAudit.create({
+    data: {},
+  });
 };
 
 const getDateOfLastGameForSummoner = async (
