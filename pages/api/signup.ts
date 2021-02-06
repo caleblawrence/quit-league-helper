@@ -34,9 +34,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   const invalidSummonerNames = [];
 
-  for (let summonerName in req.body.summonerNames) {
+  for (const summonerName of req.body.summonerNames) {
     try {
-      const response = await instance.get(
+      await instance.get(
         "https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-name/" +
           summonerName
       );
@@ -45,7 +45,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       if (error.response.status === 404) {
         invalidSummonerNames.push(summonerName);
       } else {
-        console.log("could not validate summoner name because of API error");
+        console.log(
+          "[ERROR} could not validate summoner name because of API error"
+        );
         // TODO: log this - means api could not be reached for some reason and no summoner name validation is happneing
       }
     }
