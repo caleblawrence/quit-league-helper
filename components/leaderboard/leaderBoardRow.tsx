@@ -20,18 +20,22 @@ export default function LeaderBoardRow(props: Props) {
           </span>
         </p>
         <p className="summonerNames">
-          {user.summonerNames.map((name, index) => {
-            if (index == user.summonerNames.length - 1) {
-              return name;
-            }
-            return name + ", ";
-          })}
+          Accounts:{" "}
+          <strong>
+            {user.summonerNames.map((name, index) => {
+              if (index == user.summonerNames.length - 1) {
+                return name;
+              }
+              return name + ", ";
+            })}
+          </strong>
         </p>
         <p
           className="longestStreak"
           style={{ margin: 0, padding: 0, marginTop: 5, color: "#b1afaf" }}
         >
-          Longest streak: <strong>{user.longestStreak}</strong>
+          Longest streak:{" "}
+          <strong style={{ color: "white" }}>{user.longestStreak}</strong>
         </p>
       </div>
 
