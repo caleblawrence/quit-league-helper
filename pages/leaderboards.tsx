@@ -1,9 +1,10 @@
 import Head from "next/head";
-import React from "react";
+import React, { useState } from "react";
 import prisma from "../lib/prisma";
 import { CustomLeaderboard } from "@prisma/client";
 import BuildLeaderboardButton from "../components/buildLeaderboardButton";
 import LeaderboardSummary from "../components/leaderboardSummary";
+import { TextField } from "@material-ui/core";
 //TODO: fix this any typ
 interface Props {
   leaderboards: any[];
@@ -11,6 +12,11 @@ interface Props {
 
 function Leaderboard(props: Props) {
   const { leaderboards } = props;
+  const [searchValue, setSearchValue] = useState("");
+  const filteredLeaderboards = leaderboards.filter((leaderboard) =>
+    leaderboard.name.toLowerCase().includes(searchValue.toLowerCase())
+  );
+
   return (
     <div className="container">
       <Head>
@@ -23,7 +29,15 @@ function Leaderboard(props: Props) {
 
         <BuildLeaderboardButton />
 
-        {leaderboards.map((leaderboard) => (
+        <TextField
+          label="Search leaderboards"
+          variant="standard"
+          onChange={(e) => setSearchValue(e.target.value)}
+          style={{ marginTop: 0, paddingTop: 0, marginBottom: 10 }}
+        />
+
+        {!filteredLeaderboards.length && "No leaderboards found."}
+        {filteredLeaderboards.map((leaderboard) => (
           <LeaderboardSummary leaderboard={leaderboard} />
         ))}
       </main>

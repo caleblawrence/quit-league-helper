@@ -62,12 +62,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       name: req.body.name,
       currentStreak: 0,
       summonerNames: req.body.summonerNames,
-      Streak: {
-        create: {
-          startDate: new Date(),
-          endDate: null,
-        },
-      },
     },
   });
 

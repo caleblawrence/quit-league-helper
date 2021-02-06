@@ -12,16 +12,7 @@ model User {
   name                  String
   summonerNames         String[]
   currentStreak         Int
-  Streak                Streak[]
   UserCustomLeaderboard UserCustomLeaderboard[]
-}
-
-model Streak {
-  id        Int       @id @default(autoincrement())
-  startDate DateTime
-  endDate   DateTime?
-  userId    Int
-  user      User      @relation(fields: [userId], references: [id])
 }
 
 model CustomLeaderboard {

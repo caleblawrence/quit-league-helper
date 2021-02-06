@@ -1,9 +1,6 @@
 import Head from "next/head";
 import LeaderBoardRow from "../components/leaderboard/leaderBoardRow";
 import React from "react";
-import { Button } from "@material-ui/core";
-import Alert from "@material-ui/lab/Alert";
-import Link from "next/link";
 import prisma from "../lib/prisma";
 import { User } from "@prisma/client";
 import BuildLeaderboardButton from "../components/buildLeaderboardButton";
@@ -22,7 +19,7 @@ function Leaderboard(props: Props) {
       </Head>
 
       <main>
-        <h1 className="sectionTitle">Leaderboard</h1>
+        <h1 className="sectionTitle">Global Leaderboard</h1>
 
         <BuildLeaderboardButton />
 

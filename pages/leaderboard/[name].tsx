@@ -84,7 +84,7 @@ export async function getServerSideProps(context: any) {
 
   let users = leaderboard.UserCustomLeaderboard.map((item) => item.user);
 
-  users.sort((a, b) => a.currentStreak - b.currentStreak);
+  users.sort((a, b) => b.currentStreak - a.currentStreak);
 
   return {
     props: { users: users },
