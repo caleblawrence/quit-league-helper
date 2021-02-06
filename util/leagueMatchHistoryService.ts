@@ -44,7 +44,7 @@ const checkIfUsersArePlaying = async () => {
       },
     });
 
-    if (lastSteakForUser == null) {
+    if (lastSteakForUser == undefined || lastSteakForUser == null) {
       console.log(`[ERROR] no streak existed for user: ${user.name}"`);
     }
 
@@ -73,6 +73,11 @@ const checkIfUsersArePlaying = async () => {
           endDate: null,
           userId: user.id,
         },
+      });
+
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { currentStreak: 0 },
       });
     } else {
       console.log(`[INFO] Streak continues for user: ${user.name}.`);
@@ -106,7 +111,7 @@ const getDateOfLastGameForSummoner = async (
     accountId = summonerAccountInformation.data.accountId;
   } catch (error) {
     console.log(
-      `[WARNING] Could not get summoner accountId through riot api for summonername: ${summonerName}. Status code: ${error.response.status}`
+      `[WARNING] Could not get summoner accountId through riot api for summonername: ${summonerName}. Status code: ${error?.response?.status}`
     );
   }
 
@@ -121,7 +126,7 @@ const getDateOfLastGameForSummoner = async (
     return lastGameDate;
   } catch (error) {
     console.log(
-      `[WARNING] could not get summoner match history through riot api for summonerName: ${summonerName}. Status code: ${error.response.status}`
+      `[WARNING] could not get summoner match history through riot api for summonerName: ${summonerName}. Status code: ${error?.response?.status}`
     );
   }
 };
@@ -136,7 +141,7 @@ const canConnectToRiotApi = async (axiosInstance: any) => {
     console.log("Was able to connect to RIOT api. Continuing...");
   } catch (error) {
     console.log(
-      `[ERROR] riot API could not be reached with token. Status code: ${error.response.status}`
+      `[ERROR] riot API could not be reached with token. Status code: ${error?.response?.status}`
     );
     return false;
   }
