@@ -7,6 +7,7 @@ import { Alert } from "@material-ui/lab";
 import { User } from "@prisma/client";
 import prisma from "../../lib/prisma";
 import checkUserMatchhistory from "../api/check-user-matchhistory";
+import MatchHistoryLastChecked from "../../components/matchhistoryLastChecked";
 
 interface Props {
   users: User[];
@@ -29,6 +30,8 @@ function Leaderboard(props: Props) {
 
       <main>
         <h1 className="sectionTitle">{name}</h1>
+        <MatchHistoryLastChecked />
+        <br />
 
         {users.map((user) => (
           <LeaderBoardRow user={user} key={user.name} />

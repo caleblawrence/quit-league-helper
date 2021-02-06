@@ -4,6 +4,7 @@ import React from "react";
 import prisma from "../lib/prisma";
 import { User } from "@prisma/client";
 import BuildLeaderboardButton from "../components/buildLeaderboardButton";
+import MatchHistoryLastChecked from "../components/matchhistoryLastChecked";
 
 interface Props {
   topUsers: User[];
@@ -11,6 +12,7 @@ interface Props {
 
 function Leaderboard(props: Props) {
   const { topUsers } = props;
+
   return (
     <div className="container">
       <Head>
@@ -20,8 +22,9 @@ function Leaderboard(props: Props) {
 
       <main>
         <h1 className="sectionTitle">Global Leaderboard</h1>
-
+        <MatchHistoryLastChecked />
         <BuildLeaderboardButton />
+        <br />
 
         {topUsers.map((user) => (
           <LeaderBoardRow user={user} key={user.name} />

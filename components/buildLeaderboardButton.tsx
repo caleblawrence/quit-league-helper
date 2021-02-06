@@ -15,7 +15,7 @@ const BuildLeaderboardButton = () => (
         marginTop: 0,
         marginLeft: 7,
         paddingTop: 0,
-        marginBottom: 25,
+        marginBottom: 5,
       }}
     >
       Custom leaderboards are a great way to compete with your friends.
