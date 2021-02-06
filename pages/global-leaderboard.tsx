@@ -1,11 +1,12 @@
 import Head from "next/head";
-import { User } from "../types/User";
-import { connectToDatabase } from "../util/mongodb";
 import LeaderBoardRow from "../components/leaderboard/leaderBoardRow";
 import React from "react";
 import { Button } from "@material-ui/core";
 import Alert from "@material-ui/lab/Alert";
 import Link from "next/link";
+import prisma from "../lib/prisma";
+import { User } from "@prisma/client";
+import BuildLeaderboardButton from "../components/buildLeaderboardButton";
 
 interface Props {
   topUsers: User[];
@@ -23,31 +24,7 @@ function Leaderboard(props: Props) {
       <main>
         <h1 className="sectionTitle">Leaderboard</h1>
 
-        <Alert
-          severity="warning"
-          style={{ marginBottom: 20, backgroundColor: "rgb(43 29 7)" }}
-        >
-          I'm still waiting on a real Riot API Token so this is only updated
-          about once every couple days.
-        </Alert>
-
-        <Link href="/leaderboards/new">
-          <Button color="primary" style={{ marginBottom: 0 }}>
-            Build a custom leaderboard
-          </Button>
-        </Link>
-
-        <p
-          style={{
-            color: "#797272",
-            marginTop: 0,
-            marginLeft: 7,
-            paddingTop: 0,
-            marginBottom: 25,
-          }}
-        >
-          Custom leaderboards are a great way to compete with your friends.
-        </p>
+        <BuildLeaderboardButton />
 
         {topUsers.map((user) => (
           <LeaderBoardRow user={user} key={user.name} />
@@ -80,23 +57,24 @@ function Leaderboard(props: Props) {
           color: white !important;
           text-decoration: none !important; /* no underline */
         }
+        body {
+          background-color: rgba(0, 0, 0, 1) !important;
+        }
       `}</style>
     </div>
   );
 }
 
 export async function getStaticProps() {
-  const { db } = await connectToDatabase();
-
-  const topUsers = await db
-    .collection("users")
-    .find({})
-    .sort({ currentSreak: -1 })
-    .limit(100)
-    .toArray();
+  const users = await prisma.user.findMany({
+    take: 100,
+    orderBy: {
+      currentStreak: "desc",
+    },
+  });
 
   return {
-    props: { topUsers: JSON.parse(JSON.stringify(topUsers)) },
+    props: { topUsers: users },
     revalidate: 1,
   };
 }

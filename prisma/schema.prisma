@@ -1,0 +1,39 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id                    Int                     @id @default(autoincrement())
+  name                  String
+  summonerNames         String[]
+  currentStreak         Int
+  Streak                Streak[]
+  UserCustomLeaderboard UserCustomLeaderboard[]
+}
+
+model Streak {
+  id        Int       @id @default(autoincrement())
+  startDate DateTime
+  endDate   DateTime?
+  userId    Int
+  user      User      @relation(fields: [userId], references: [id])
+}
+
+model CustomLeaderboard {
+  id                    Int                     @id @default(autoincrement())
+  name                  String
+  UserCustomLeaderboard UserCustomLeaderboard[]
+}
+
+model UserCustomLeaderboard {
+  id                  Int               @id @default(autoincrement())
+  userId              Int
+  user                User              @relation(fields: [userId], references: [id])
+  customLeaderboardId Int
+  customLeaderboard   CustomLeaderboard @relation(fields: [customLeaderboardId], references: [id])
+}

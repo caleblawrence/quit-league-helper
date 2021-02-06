@@ -1,33 +1,32 @@
-import { exception } from "console";
-import { Streak } from "../types/Streak";
-
 var axios = require("axios");
-var mongoUtils = require("../util/mongodb");
-
-const { LEAGUE_API_KEY } = process.env;
-
-const axiosInstance = axios.create({
-  timeout: 1000,
-  headers: {
-    "X-Riot-Token": "RGAPI-f95b3690-2a4e-46c3-bb7e-889e221af98a",
-  },
-});
+import prisma from "../lib/prisma";
 
 const checkIfUsersArePlaying = async () => {
-  // leave early if we can't connect
-  await checkIfRiotApiCanConnect();
+  const { LEAGUE_API_KEY } = process.env;
 
-  const { db } = await mongoUtils.connectToDatabase();
-  const users = await db
-    .collection("users")
-    .find({})
-    .sort({ metacritic: -1 })
-    .toArray();
+  const axiosInstance = axios.create({
+    timeout: 1000,
+    headers: {
+      "X-Riot-Token": LEAGUE_API_KEY,
+    },
+  });
+
+  // leave early if we can't connect
+  let canConnect = await canConnectToRiotApi(axiosInstance);
+  if (!canConnect) {
+    throw new Error("Can't connect to Riot Api. Check your Api token.");
+  }
+
+  const users = await prisma.user.findMany();
 
   for (const user of users) {
     let latestDatePlayed = new Date(-8640000000000000);
     for (const summonerName of user.summonerNames) {
-      var lastGameOnAccount = await getDateOfLastGameForSummoner(summonerName);
+      var lastGameOnAccount = await getDateOfLastGameForSummoner(
+        summonerName,
+        axiosInstance
+      );
+
       if (lastGameOnAccount > latestDatePlayed) {
         latestDatePlayed = lastGameOnAccount;
       }
@@ -36,77 +35,65 @@ const checkIfUsersArePlaying = async () => {
     // dont care about hours/min/sec
     latestDatePlayed.setHours(0, 0, 0, 0);
 
-    const userLastStreaks = await db
-      .collection("streaks")
-      .find({ userId: user._id, endDate: null })
-      .sort({ startDate: -1 })
-      .limit(1)
-      .toArray();
+    const users = await prisma.user.findMany();
 
-    if (userLastStreaks == []) {
-      console.log("[ERROR] no streak existed for user: ", user.name);
+    const lastSteakForUser = await prisma.streak.findFirst({
+      where: { id: user.id },
+      orderBy: {
+        startDate: "asc",
+      },
+    });
+
+    if (lastSteakForUser == null) {
+      console.log(`[ERROR] no streak existed for user: ${user.name}"`);
     }
 
-    let lastStreak = userLastStreaks[0];
-
-    const lastStreakStartDate = new Date(lastStreak.startDate);
+    const lastStreakStartDate = new Date(lastSteakForUser.startDate);
 
     // dont care about hours/min/sec
     lastStreakStartDate.setHours(0, 0, 0, 0);
 
     console.log(
-      "User: " +
-        user.name +
-        " played their last game on: " +
-        latestDatePlayed +
-        " and their last streak startdate was: " +
-        lastStreakStartDate
+      `[INFO] User: ${user.name} played their last game on ${latestDatePlayed} and their last streak startdate was ${lastStreakStartDate}.`
     );
 
     if (latestDatePlayed > lastStreakStartDate) {
-      console.log("Streak was ended - creaing a new one.");
-      await db.collection("streaks").updateOne(
-        { _id: lastStreak._id },
-        {
-          $set: {
-            startDate: lastStreak.startDate,
-            endDate: new Date(),
-            userId: lastStreak.userId,
-          },
-        }
+      console.log(
+        `[INFO] Streak was ended for user: ${user.name}. Creaing a new one.`
       );
 
-      let newStreak = <Streak>{};
-      newStreak.startDate = new Date();
-      newStreak.endDate = null;
-      newStreak.userId = lastStreak.userId;
+      await prisma.streak.update({
+        where: { id: lastSteakForUser.id },
+        data: { endDate: new Date() },
+      });
 
-      await db.collection("streaks").insertOne(newStreak);
+      prisma.streak.create({
+        data: {
+          startDate: new Date(),
+          endDate: null,
+          userId: user.id,
+        },
+      });
     } else {
-      console.log("Streak continues");
+      console.log(`[INFO] Streak continues for user: ${user.name}.`);
       // To calculate the time difference of two dates
       var differenceInTime = new Date().getTime() - latestDatePlayed.getTime();
 
       // To calculate the no. of days between two dates
-      var differenceInDays = differenceInTime / (1000 * 3600 * 24);
+      let differenceInDays = differenceInTime / (1000 * 3600 * 24);
       differenceInDays = Math.floor(differenceInDays);
 
-      await db.collection("users").updateOne(
-        { _id: user._id },
-        {
-          $set: {
-            name: user.name,
-            summonerNames: user.summonerNames,
-            currentSreak: differenceInDays,
-          },
-        }
-      );
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { currentStreak: differenceInDays },
+      });
     }
   }
 };
 
 const getDateOfLastGameForSummoner = async (
-  summonerName: string
+  summonerName: string,
+  axiosInstance: any
 ): Promise<Date> => {
   let accountId = "";
   try {
@@ -139,7 +126,7 @@ const getDateOfLastGameForSummoner = async (
   }
 };
 
-const checkIfRiotApiCanConnect = async () => {
+const canConnectToRiotApi = async (axiosInstance: any) => {
   try {
     var URI = encodeURI(
       "https://na1.api.riotgames.com//lol/platform/v3/champion-rotations"
@@ -151,8 +138,9 @@ const checkIfRiotApiCanConnect = async () => {
     console.log(
       `[ERROR] riot API could not be reached with token. Status code: ${error.response.status}`
     );
-    throw new Error("Can't connect to riot api");
+    return false;
   }
+  return true;
 };
 
 export { checkIfUsersArePlaying };

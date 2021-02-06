@@ -1,10 +1,7 @@
-import { CustomLeaderboard } from "../../../types/CustomLeaderboard";
 import { NextApiRequest, NextApiResponse } from "next";
-import { connectToDatabase } from "../../../util/mongodb";
+import prisma from "../../../lib/prisma";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
-  const { db } = await connectToDatabase();
-
   // TODO: abstract validation to make this easier to read
   if (
     !req.body.hasOwnProperty("name") ||
@@ -25,25 +22,24 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     });
   }
 
-  let userIds = [];
+  let userIds: number[] = [];
   let summonerNamesNotFound = [];
   for (let summonnerName of req.body.summonerNames) {
-    const user = await db
-      .collection("users")
-      .find({ summonerNames: summonnerName })
-      .sort({ _id: -1 })
-      .limit(1)
-      .toArray();
+    console.log("looking for summoner name: ", summonnerName);
+    let user = await prisma.user.findFirst({
+      where: {
+        summonerNames: {
+          has: summonnerName,
+        },
+      },
+    });
 
-    if (user && user.length > 0) {
-      userIds.push(user[0]._id);
+    if (user != null) {
+      userIds.push(+user.id);
     } else {
       summonerNamesNotFound.push(summonnerName);
     }
   }
-
-  console.log("userIds", userIds);
-  console.log("summonerNamesNotFound", summonerNamesNotFound);
 
   if (summonerNamesNotFound.length > 0) {
     return res
@@ -51,14 +47,26 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       .json({ error: "Invalid summoner names.", summonerNamesNotFound });
   }
 
-  let customLeaderboard = <CustomLeaderboard>{};
-  customLeaderboard.name = req.body.name;
-  customLeaderboard.createdAt = new Date();
-  customLeaderboard.userIds = userIds;
+  var numLeaderboardsAlreadyWithThisName = await prisma.customLeaderboard.count(
+    {
+      where: { name: req.body.name },
+    }
+  );
 
-  let newBoard = await db
-    .collection("customLeaderboards")
-    .insertOne(customLeaderboard);
+  if (numLeaderboardsAlreadyWithThisName !== 0) {
+    return res
+      .status(409)
+      .json({ error: "Leaderboard with that name already exists." });
+  }
 
-  return res.json({ newBoard });
+  var newLeaderboard = await prisma.customLeaderboard.create({
+    data: {
+      name: req.body.name,
+      UserCustomLeaderboard: {
+        create: userIds.map((userId) => ({ userId: userId })),
+      },
+    },
+  });
+
+  return res.json({ newLeaderboard });
 };

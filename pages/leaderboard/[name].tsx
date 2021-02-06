@@ -1,23 +1,23 @@
 import { useRouter } from "next/router";
-
 import Head from "next/head";
-import { User } from "../../types/User";
-import { connectToDatabase } from "../../util/mongodb";
 import LeaderBoardRow from "../../components/leaderboard/leaderBoardRow";
 import React from "react";
 import Error from "next/error";
 import { Alert } from "@material-ui/lab";
+import { User } from "@prisma/client";
+import prisma from "../../lib/prisma";
+import checkUserMatchhistory from "../api/check-user-matchhistory";
 
 interface Props {
-  topUsers: User[];
+  users: User[];
 }
 
 function Leaderboard(props: Props) {
   const router = useRouter();
   const { name } = router.query;
-  const { topUsers } = props;
+  const { users } = props;
 
-  if (topUsers == null) {
+  if (users == null) {
     return <Error statusCode={404} />;
   }
   return (
@@ -30,15 +30,7 @@ function Leaderboard(props: Props) {
       <main>
         <h1 className="sectionTitle">{name}</h1>
 
-        <Alert
-          severity="warning"
-          style={{ marginBottom: 20, backgroundColor: "rgb(43 29 7)" }}
-        >
-          I'm still waiting on a real Riot API Token so this is only updated
-          about once every couple days.
-        </Alert>
-
-        {topUsers.map((user) => (
+        {users.map((user) => (
           <LeaderBoardRow user={user} key={user.name} />
         ))}
       </main>
@@ -75,34 +67,27 @@ function Leaderboard(props: Props) {
 }
 
 export async function getServerSideProps(context: any) {
-  const { db } = await connectToDatabase();
   var name = context.params.name;
 
-  let leaderboard = await db
-    .collection("customLeaderboards")
-    .find({ name: name })
-    .limit(1)
-    .toArray();
+  let leaderboard = await prisma.customLeaderboard.findFirst({
+    where: {
+      name: name,
+    },
+    select: {
+      UserCustomLeaderboard: {
+        select: {
+          user: true,
+        },
+      },
+    },
+  });
 
-  if (leaderboard.length == 0) {
-    return {
-      props: { topUsers: null },
-    };
-  }
+  let users = leaderboard.UserCustomLeaderboard.map((item) => item.user);
 
-  leaderboard = leaderboard[0];
-
-  let userIds = leaderboard.userIds;
-
-  const topUsers = await db
-    .collection("users")
-    .find({ _id: { $in: userIds } })
-    .sort({ currentSreak: -1 })
-    .limit(100)
-    .toArray();
+  users.sort((a, b) => a.currentStreak - b.currentStreak);
 
   return {
-    props: { topUsers: JSON.parse(JSON.stringify(topUsers)) },
+    props: { users: users },
   };
 }
 

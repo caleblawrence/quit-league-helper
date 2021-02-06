@@ -33,7 +33,10 @@ export default function ButtonAppBar() {
             <Link href="/">Sign up</Link>
           </Button>
           <Button color="inherit">
-            <Link href="/leaderboard">Leaderboard</Link>
+            <Link href="/global-leaderboard">Global Leaderboard</Link>
+          </Button>
+          <Button color="inherit">
+            <Link href="/leaderboards">Leaderboards</Link>
           </Button>
         </Toolbar>
       </AppBar>
