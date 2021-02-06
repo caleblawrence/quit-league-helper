@@ -4,8 +4,9 @@ import prisma from "../lib/prisma";
 import { CustomLeaderboard } from "@prisma/client";
 import BuildLeaderboardButton from "../components/buildLeaderboardButton";
 import LeaderboardSummary from "../components/leaderboardSummary";
+//TODO: fix this any typ
 interface Props {
-  leaderboards: CustomLeaderboard[];
+  leaderboards: any[];
 }
 
 function Leaderboard(props: Props) {
