@@ -27,6 +27,12 @@ export default function LeaderBoardRow(props: Props) {
             return name + ", ";
           })}
         </p>
+        <p
+          className="longestStreak"
+          style={{ margin: 0, padding: 0, marginTop: 5, color: "#b1afaf" }}
+        >
+          Longest streak: <strong>{user.longestStreak}</strong>
+        </p>
       </div>
 
       <style jsx>{`

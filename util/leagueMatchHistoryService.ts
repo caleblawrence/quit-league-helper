@@ -44,9 +44,16 @@ const checkIfUsersArePlaying = async () => {
     let daysSinceLastGame = differenceInTime / (1000 * 3600 * 24);
     daysSinceLastGame = Math.floor(daysSinceLastGame);
 
+    var longestStreakForUser = user.longestStreak;
+    if (daysSinceLastGame > longestStreakForUser) {
+      longestStreakForUser = daysSinceLastGame;
+    }
     await prisma.user.update({
       where: { id: user.id },
-      data: { currentStreak: daysSinceLastGame },
+      data: {
+        currentStreak: daysSinceLastGame,
+        longestStreak: longestStreakForUser,
+      },
     });
   }
 };
