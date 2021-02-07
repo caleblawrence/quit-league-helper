@@ -1,5 +1,5 @@
 var axios = require("axios");
-import prisma from "../lib/prisma";
+import prisma from "./prisma";
 
 const checkIfUsersArePlaying = async () => {
   const { LEAGUE_API_KEY } = process.env;

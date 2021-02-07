@@ -10,6 +10,5 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       couldConnectToRiotApi: true,
     },
   });
-  res.setHeader("Cache-Control", "s-maxage=3600, stale-while-revalidate");
   return res.json(auditRecord);
 };
