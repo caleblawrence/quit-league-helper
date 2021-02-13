@@ -14,7 +14,7 @@ export default function LeaderBoardRow(props: Props) {
       <div className="section">
         <p className="name">{user.name}</p>
         <p className="streak">
-          {user.currentStreak} {user.currentStreak > 0 ? "day" : "days"}{" "}
+          {user.currentStreak} {user.currentStreak === 1 ? "day" : "days"}{" "}
           <span style={{ color: "#b9b3b3", fontSize: 20 }}>
             since last game of League of Legends
           </span>
