@@ -35,7 +35,7 @@ export default function LeaderBoardRow(props: Props) {
           style={{ margin: 0, padding: 0, marginTop: 5, color: "#b1afaf" }}
         >
           Longest streak:{" "}
-          <strong style={{ color: "white" }}>{user.longestStreak}</strong>
+          <strong style={{ color: "white" }}>{user.longestStreak}</strong> days
         </p>
       </div>
 
