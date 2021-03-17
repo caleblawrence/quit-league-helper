@@ -1,7 +1,7 @@
-name: 15-minute-cron
+name: every-12-hours-cron
 on:
   schedule:
-    - cron: "*/15 * * * *"
+    - cron: "0 1,13 * * *"
 jobs:
   cron:
     runs-on: ubuntu-latest
