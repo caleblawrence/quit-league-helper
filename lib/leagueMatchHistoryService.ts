@@ -24,15 +24,19 @@ const checkIfUsersArePlaying = async () => {
   const users = await prisma.user.findMany();
 
   for (const user of users) {
-    let latestDatePlayed = new Date(-8640000000000000);
-    let lastAccountPlayedOn = "";
+    let latestDatePlayed = null;
+    let lastAccountPlayedOn = null;
     for (const summonerName of user.summonerNames) {
       var lastGameOnAccount = await getDateOfLastGameForSummoner(
         summonerName,
         axiosInstance
       );
 
-      if (lastGameOnAccount > latestDatePlayed) {
+      if (lastGameOnAccount == null) {
+        continue;
+      }
+
+      if (lastGameOnAccount > latestDatePlayed || latestDatePlayed === null) {
         latestDatePlayed = lastGameOnAccount;
         lastAccountPlayedOn = summonerName;
       }
@@ -42,13 +46,11 @@ const checkIfUsersArePlaying = async () => {
       `[INFO] User: ${user.name} played their last game on ${latestDatePlayed} (with ${lastAccountPlayedOn}).`
     );
 
-    var couldGetLastPlayTime = true;
-    if (
-      new Date(lastAccountPlayedOn).getFullYear() ==
-      new Date(-8640000000000000).getFullYear()
-    ) {
-      couldGetLastPlayTime = false;
+    // if the all th account names are invalid or something we want to exit early
+    if (latestDatePlayed == null) {
+      continue;
     }
+
     // To calculate the time difference of two dates
     var differenceInTime = new Date().getTime() - latestDatePlayed.getTime();
 
@@ -57,7 +59,7 @@ const checkIfUsersArePlaying = async () => {
     daysSinceLastGame = Math.floor(daysSinceLastGame);
 
     var longestStreakForUser = user.longestStreak;
-    if (daysSinceLastGame > longestStreakForUser && couldGetLastPlayTime) {
+    if (daysSinceLastGame > longestStreakForUser) {
       longestStreakForUser = daysSinceLastGame;
     }
     await prisma.user.update({
