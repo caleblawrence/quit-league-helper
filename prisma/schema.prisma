@@ -13,6 +13,7 @@ model User {
   summonerNames         String[]
   currentStreak         Int
   longestStreak         Int                     @default(0)
+  lastModifiedTime      DateTime                @default(now())
   UserCustomLeaderboard UserCustomLeaderboard[]
 }
 

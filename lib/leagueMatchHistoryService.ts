@@ -21,7 +21,18 @@ const checkIfUsersArePlaying = async () => {
     throw new Error("Can't connect to Riot Api. Check your Api token.");
   }
 
-  const users = await prisma.user.findMany();
+  // only get users that have not been updated in the last 24 hours
+  // this is just in case the function times out in the middle of the run (max 10 seconds it can run)
+  // so this enables it to continually update the users that have not been updated yet
+  let currentDate = new Date();
+  currentDate.setHours(currentDate.getHours() - 24);
+  const users = await prisma.user.findMany({
+    where: {
+      lastModifiedTime: {
+        lt: currentDate,
+      },
+    },
+  });
 
   for (const user of users) {
     let latestDatePlayed = null;
@@ -46,7 +57,7 @@ const checkIfUsersArePlaying = async () => {
       `[INFO] User: ${user.name} played their last game on ${latestDatePlayed} (with ${lastAccountPlayedOn}).`
     );
 
-    // if the all th account names are invalid or something we want to exit early
+    // if the all the account names are invalid or something we want to exit early
     if (latestDatePlayed == null) {
       continue;
     }
@@ -67,6 +78,7 @@ const checkIfUsersArePlaying = async () => {
       data: {
         currentStreak: daysSinceLastGame,
         longestStreak: longestStreakForUser,
+        lastModifiedTime: new Date(),
       },
     });
   }
