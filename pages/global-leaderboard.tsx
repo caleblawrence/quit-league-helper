@@ -68,6 +68,12 @@ function Leaderboard(props: Props) {
 export async function getStaticProps() {
   const users = await prisma.user.findMany({
     take: 100,
+    select: {
+      summonerNames: true,
+      currentStreak: true,
+      name: true,
+      longestStreak: true,
+    },
     orderBy: {
       currentStreak: "desc",
     },

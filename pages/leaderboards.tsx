@@ -1,7 +1,6 @@
 import Head from "next/head";
 import React, { useState } from "react";
 import prisma from "../lib/prisma";
-import { CustomLeaderboard } from "@prisma/client";
 import BuildLeaderboardButton from "../components/buildLeaderboardButton";
 import LeaderboardSummary from "../components/leaderboardSummary";
 import { TextField } from "@material-ui/core";
@@ -81,7 +80,20 @@ export async function getStaticProps() {
     orderBy: {
       id: "desc",
     },
-    include: { UserCustomLeaderboard: { include: { user: true } } },
+    include: {
+      UserCustomLeaderboard: {
+        include: {
+          user: {
+            select: {
+              summonerNames: true,
+              currentStreak: true,
+              name: true,
+              longestStreak: true,
+            },
+          },
+        },
+      },
+    },
   });
 
   return {
