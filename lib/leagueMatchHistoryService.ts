@@ -93,15 +93,16 @@ const getDateOfLastGameForSummoner = async (
   summonerName: string,
   axiosInstance: any
 ): Promise<Date> => {
-  let accountId = "";
+  let accountPuuid = "";
   try {
+    // `data is in response.data.puuid`
     var URI = encodeURI(
       "https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-name/" +
         summonerName
     );
 
     const summonerAccountInformation = await axiosInstance.get(URI);
-    accountId = summonerAccountInformation.data.accountId;
+    accountPuuid = summonerAccountInformation.data.puuid;
   } catch (error) {
     console.log(
       `[WARNING] Could not get summoner accountId through riot api for summonername: ${summonerName}. Status code: ${error?.response?.status}`
@@ -109,13 +110,15 @@ const getDateOfLastGameForSummoner = async (
   }
 
   try {
-    const response = await axiosInstance.get(
-      "https://na1.api.riotgames.com/lol/match/v4/matchlists/by-account/" +
-        accountId +
-        "?champion=&queue=&season=&endTime=&beginTime=&endIndex=&beginIndex="
+    const latestMatchesResponse = await axiosInstance.get(
+      `https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/${accountPuuid}/ids?start=0&count=20`
+    );
+    const lastMatchId = latestMatchesResponse.data[0];
+    const latestMatchData = await axiosInstance.get(
+      `https://americas.api.riotgames.com/lol/match/v5/matches/${lastMatchId}`
     );
 
-    let lastGameDate = new Date(response.data.matches[0].timestamp);
+    let lastGameDate = new Date(latestMatchData.data.info.gameCreation);
     return lastGameDate;
   } catch (error) {
     console.log(
@@ -127,7 +130,7 @@ const getDateOfLastGameForSummoner = async (
 const canConnectToRiotApi = async (axiosInstance: any) => {
   try {
     var URI = encodeURI(
-      "https://na1.api.riotgames.com//lol/platform/v3/champion-rotations"
+      "https://na1.api.riotgames.com/lol/status/v3/shard-data"
     );
 
     await axiosInstance.get(URI);
