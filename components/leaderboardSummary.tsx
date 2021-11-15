@@ -39,7 +39,7 @@ function LeaderboardSummary(props: Props) {
           })}
         </p>
         <p className="currentLeader">
-          Current leader: <strong>{currentLeader?.name}</strong>. He/she hasn't
+          Current leader: <strong>{currentLeader?.name}</strong>. He/she has not
           played league for <strong>{currentLeader?.currentStreak}</strong>{" "}
           days.
         </p>

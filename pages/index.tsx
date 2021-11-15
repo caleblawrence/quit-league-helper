@@ -107,7 +107,7 @@ const Home = () => {
           <Alert severity="error">
             <AlertTitle>Invalid Summoner Names</AlertTitle>
             {invalidSummonerNames.map((name) => (
-              <p>{name}</p>
+              <p key={name}>{name}</p>
             ))}
           </Alert>
         )}

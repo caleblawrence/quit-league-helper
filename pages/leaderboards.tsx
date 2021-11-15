@@ -36,8 +36,8 @@ function Leaderboard(props: Props) {
         />
 
         {!filteredLeaderboards.length && "No leaderboards found."}
-        {filteredLeaderboards.map((leaderboard) => (
-          <LeaderboardSummary leaderboard={leaderboard} />
+        {filteredLeaderboards.map((leaderboard, i) => (
+          <LeaderboardSummary leaderboard={leaderboard} key={i} />
         ))}
       </main>
 

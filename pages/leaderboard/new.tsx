@@ -10,10 +10,8 @@ function BuildCustomLeaderboard() {
   const [isLoading, setIsLoading] = useState(false);
   const [summonerNames, setSummonerNames] = useState(["", ""]);
   const [summonerNamesNotFound, setSummonerNamesNotFound] = useState([]);
-  const [
-    shouldShowLeadboardNameError,
-    setShouldShowLeadboardNameError,
-  ] = useState(false);
+  const [shouldShowLeadboardNameError, setShouldShowLeadboardNameError] =
+    useState(false);
 
   const handleCreateButtonPress = async () => {
     setIsLoading(true);
@@ -98,8 +96,8 @@ function BuildCustomLeaderboard() {
             <AlertTitle>
               Could not find users that signed up the following summoner names:
             </AlertTitle>
-            {summonerNamesNotFound.map((name) => (
-              <p>{name}</p>
+            {summonerNamesNotFound.map((name, i) => (
+              <p key={i}>{name}</p>
             ))}
           </Alert>
         )}
