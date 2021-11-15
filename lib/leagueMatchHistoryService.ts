@@ -24,6 +24,7 @@ const checkIfUsersArePlaying = async () => {
   // only get users that have not been updated in the last 24 hours
   // this is just in case the function times out in the middle of the run (max 10 seconds it can run)
   // so this enables it to continually update the users that have not been updated yet
+
   let currentDate = new Date();
   currentDate.setHours(currentDate.getHours() - 24);
   const users = await prisma.user.findMany({
