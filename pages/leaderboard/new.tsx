@@ -90,7 +90,6 @@ function BuildCustomLeaderboard() {
         >
           Add another user
         </Button>
-
         {summonerNamesNotFound.length > 0 && (
           <Alert severity="error" style={{ backgroundColor: "rgb(37 11 10)" }}>
             <AlertTitle>
@@ -101,13 +100,12 @@ function BuildCustomLeaderboard() {
             ))}
           </Alert>
         )}
-
+        ``
         {shouldShowLeadboardNameError && (
           <Alert severity="error" style={{ backgroundColor: "rgb(37 11 10)" }}>
             <AlertTitle>Leadboard already exists with this name</AlertTitle>
           </Alert>
         )}
-
         <Button
           variant="contained"
           color="primary"

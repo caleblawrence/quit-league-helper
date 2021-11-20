@@ -15,6 +15,26 @@ model User {
   longestStreak         Int                     @default(0)
   lastModifiedTime      DateTime                @default(now())
   UserCustomLeaderboard UserCustomLeaderboard[]
+  UserLeagueAccount     UserLeagueAccount[]
+}
+
+model LeagueAccount {
+  id           Int      @id @default(autoincrement())
+  summonerName String
+  puuid        String?
+  isInvalid    Boolean  @default(false)
+  createdAt    DateTime @default(now())
+
+  UserLeagueAccount UserLeagueAccount[]
+}
+
+model UserLeagueAccount {
+  id              Int           @id @default(autoincrement())
+  userId          Int
+  user            User          @relation(fields: [userId], references: [id])
+  leagueAccountId Int
+  LeagueAccount   LeagueAccount @relation(fields: [leagueAccountId], references: [id])
+
 }
 
 model CustomLeaderboard {
@@ -29,10 +49,4 @@ model UserCustomLeaderboard {
   user                User              @relation(fields: [userId], references: [id])
   customLeaderboardId Int
   customLeaderboard   CustomLeaderboard @relation(fields: [customLeaderboardId], references: [id])
-}
-
-model MatchHistoryServiceAudit {
-  id                    Int      @id @default(autoincrement())
-  date                  DateTime @default(now())
-  couldConnectToRiotApi Boolean  @default(true)
 }
