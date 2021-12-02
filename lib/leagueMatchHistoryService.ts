@@ -80,7 +80,6 @@ const checkIfUsersArePlaying = async () => {
           }
         }
       }
-
       let lastGameOnAccount: Date;
       try {
         const latestMatchesResponse = await axiosInstance.get(
@@ -152,6 +151,10 @@ const checkIfUsersArePlaying = async () => {
       },
     });
   }
+  // all rows defaulted
+  await prisma.matchHistoryServiceAudit.create({
+    data: {},
+  });
 };
 
 export { checkIfUsersArePlaying };

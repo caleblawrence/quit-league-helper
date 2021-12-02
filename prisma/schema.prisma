@@ -50,3 +50,8 @@ model UserCustomLeaderboard {
   customLeaderboardId Int
   customLeaderboard   CustomLeaderboard @relation(fields: [customLeaderboardId], references: [id])
 }
+
+model MatchHistoryServiceAudit {
+  id   Int      @id @default(autoincrement())
+  date DateTime @default(now())
+}
